@@ -1,0 +1,105 @@
+clear all
+close all
+clc
+
+x= 0.1:1/22:1;
+d=(1+0.6*sin(2*pi*x/0.7)+0.3*sin(2*2*x))/2;
+
+plot (x,d,'bx')
+
+%Pradiniu tinklo parametru pasirinkimas (generavimas)
+% 1 pasleptojo sluoksnio neuronams
+w11_1=randn(1);
+w12_1=randn(1);
+b1_1=randn(1);
+
+w21_1=randn(1);
+w22_1=randn(1);
+b2_1=randn(1);
+
+% 2 pasleptojo sluoksnio neuronams
+w11_2=randn(1);
+b1_2=randn(1);
+
+w21_2=randn(1);
+w22_2=randn(1);
+b2_2=randn(1);
+
+w31_2=randn(1);
+w32_2=randn(1);
+b3_2=randn(1);
+
+% isejimas
+w11_3=randn(1);
+w12_3=randn(1);
+w13_3=randn(1);
+b1_3=randn(1);
+
+y_prev=0;
+mok_zing=0.025;
+for mok=1:100
+for n=1:numel(x)
+    if n==1
+    y_prev=0;
+    else
+    end
+    %Tinklo atsako skaiciavimas
+    %pirmas sluoksnis
+    v1_1=w11_1*x(n)+w12_1*y_prev+b1_1;
+    v2_1=w21_1*x(n)+w22_1*y_prev+b2_1;
+    y1_1=1/(1+exp(-v1_1));
+    y2_1=1/(1+exp(-v2_1));
+    
+    %antras sluoksnis
+    v1_2=w11_2*y1_1+b1_2;
+    v2_2=w21_2*y1_1+w22_2*y2_1+b2_2;
+    v3_2=w32_2*y2_1+b3_2;
+    y1_2=v1_2;
+    y2_2=v2_2;
+    y3_2=v3_2;
+    
+    %isejimo sluoksnis
+    v1_3=w11_3*y1_2+w12_3*y2_2+w13_3*y3_2+b1_3;
+    y(n)=(tanh(v1_3));
+  
+    %Tinnklo mokymas koeficientu atnaujinimas)
+    e=d(n)-y;
+    
+    %klaidos gradientos skaiciavimas
+    d_out=(1-tanh(v1_3)^2)*e; %isvestine * klaida (tik jei tikslo f-ja e=1/2*e^2)
+    d1_2=1*d_out*w11_3; %isvestine * klaidos gradientas * rysio svoris
+    d2_2=1*d_out*w12_3;
+    d3_2=1*d_out*w13_3;
+    d1_1=y1_1*(1-y1_1)*(d1_2*w11_2+d2_2*w21_2);  %isvestine * pasverta klaidos gradientu suma 
+    d2_1=y1_1*(1-y1_1)*(d2_2*w21_2+d3_2*w31_2);
+    
+    %isejimo neurono svoriu atnaujinimas
+    w11_3=w11_3+mok_zing*d_out*y1_2;
+    w12_3=w12_3+mok_zing*d_out*y2_2;
+    w13_3=w13_3+mok_zing*d_out*y3_2;
+    b1_3=b1_3+mok_zing*d_out*1;
+    
+    %2 pasletojo sluoksnio neuronu paprametrai
+    w11_2=w11_2+mok_zing*d1_2*y1_1;
+    b1_2=b1_2+mok_zing*d1_2*1;
+    
+    w21_2=w21_2+mok_zing*d2_2*y1_1;
+    w22_2=w22_2+mok_zing*d2_2*y2_1;
+    b2_2=b2_2+mok_zing*d2_2*1;
+    
+    w32_2=w32_2+mok_zing*d3_2*y2_1;
+    b3_2=b3_2+mok_zing*d3_2*1;
+    
+    %1 pasleptojo sluoksnio neuronu parametrai
+    w11_1=w11_1+mok_zing*d1_1*x(n);
+    w12_1=w12_1+mok_zing*d1_1*y_prev;
+    b1_1=b1_1+mok_zing*d1_1;
+    
+    w21_1=w21_1+mok_zing*d2_1*x(n);
+    w22_1=w22_1+mok_zing*d2_1*y_prev;
+    b2_1=b2_1+mok_zing*d2_1;
+    
+    y_prev=y;
+    end
+end
+%baigiasi mokymas
