@@ -3,6 +3,8 @@
 % Lab. Nr.2
 
 clear all
+close all
+
 % Pasirinkti DNT strukt?ra
 % vienas iš?jimas x
 % vienas pasl?ptas sluoksnis su 5 neuronais
