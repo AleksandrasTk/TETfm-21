@@ -1,0 +1,42 @@
+clear all
+clc
+close all
+%peepgole LSTM
+%duomenys
+x = 0.1:1/22:1;
+d = (1+0.6*sin(2*pi*x/0.7))+(0.3*sin(2*pi*x))/2;
+figure
+plot(x,d,'g*')
+%pradiniai rysiu svoriai
+Wf=randn(1);
+Uf=randn(1);
+bf=randn(1);
+Wi=randn(1);
+Ui=randn(1);
+bi=randn(1);
+Wo=randn(1);
+Uo=randn(1);
+bo=randn(1);
+c=0;
+mok_zin=0.1;
+%tinklo atsakas
+for n = 1:numel(x)
+    vf = Wf*x(n)+Uf*c+bf;
+    ft = 1/(1+exp(-vf)); %forget gate
+    vi=Wi*x(n)+Ui*c+bi;
+    it=1/(1+exp(-vf));
+    vo=Wo*x(n)+Uo*c+bo;
+    ot=1/(1+exp(-vf));
+    ct=ft*c+it*tanh(Wc*x(n)+bc); %tanh - hiperbolinis tangentas
+%   ht=ot*tanh(ct);
+    ht=ot*ct;
+    H(n)=ht;
+    c=ct;
+    %klaidos skaiciavimas
+%   e=d(n)-H(n);
+    e=d(n)-ht;
+    Wo=Wo+mok_zin*e*ct*ot*(1-ot)*x(n);
+%   Wf=Wf+<....>  
+end
+figure
+plot(x,d,'g*',x,H,'r*')
