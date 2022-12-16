@@ -20,7 +20,7 @@ w1 = rand();
 w2 = rand();
 w0 = rand();
 
-%skaiciuojam momentini tinklo atsaka
+% Skaiciuojame momentinį tinklo atsaka
 for index = 10000
     for n = 1:20
         f1 = exp((-(x(n)-c1)^2)/((2*r1)^2));
@@ -28,7 +28,7 @@ for index = 10000
         y1(n) = f1 * w1 + f2 * w2 + w0;
         e = y(n) - y1(n);
         
-        %tinklo apmokymas
+        % Tinklo apmokymas
         w1 = w1 + mok_zing * e * f1;
         w2 = w2 + mok_zing * e *f2;
         w0 = w0 + mok_zing * e;
